@@ -1,3 +1,3 @@
 ============================
-Welcome to serlist |version|
+Welcome to SERList |version|
 ============================

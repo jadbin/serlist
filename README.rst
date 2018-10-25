@@ -1,5 +1,5 @@
 =======
-serlist
+SERList
 =======
 
 .. image:: https://travis-ci.org/jadbin/serlist.svg?branch=master
@@ -14,11 +14,11 @@ serlist
 Key Features
 ============
 
-抽取搜索引擎结果列表页中信息:
+Scraping the information from a search engine results page including:
 
 - title
 - link
-- abstract
+- description
 
 Documentation
 =============
