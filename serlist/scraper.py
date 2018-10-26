@@ -1,6 +1,18 @@
 # coding=utf-8
 
+from collections import defaultdict
+
+from lxml.html.clean import Cleaner
+
 from serlist.selector import Selector
+
+cleaner = Cleaner(scripts=True,
+                  javascript=True,
+                  comments=True,
+                  style=True,
+                  page_structure=False,
+                  remove_unknown_tags=False,
+                  safe_attrs_only=False)
 
 
 class SerpScraper:
@@ -9,12 +21,12 @@ class SerpScraper:
         self._filter_no_link = filter_no_link
 
     def scrap(self, text):
-        selector = Selector(text=text)
+        selector = Selector(text=cleaner.clean_html(text))
         title_nodes = self._detect_title_nodes(selector)
         if len(title_nodes) == 0:
             return []
-        link_nodes = self._get_related_link_nodes(title_nodes)
-        description_nodes = self._get_related_description_nodes(title_nodes)
+        link_nodes, title_blocks = self._get_related_link_nodes(title_nodes)
+        description_nodes = self._get_related_description_nodes(title_blocks)
         return self._pack_results(title_nodes, link_nodes, description_nodes)
 
     def _detect_title_nodes(self, selector):
@@ -31,12 +43,23 @@ class SerpScraper:
 
     def _get_related_link_nodes(self, title_nodes):
         link_nodes = []
+        title_blocks = []
         for node in title_nodes:
             link = self._search_link_in_parents(node)
             if link is None:
-                link = self._search_link_in_sons(node)
+                inner_links = self._search_link_in_children(node)
+                if len(inner_links) > 0:
+                    m = 0
+                    for i in inner_links:
+                        x = len(Selector(root=i).text.strip())
+                        if x > m:
+                            m = x
+                            link = i
+                title_blocks.append(node)
+            else:
+                title_blocks.append(link)
             link_nodes.append(link)
-        return link_nodes
+        return link_nodes, title_blocks
 
     def _search_link_in_parents(self, node):
         p = node
@@ -45,24 +68,38 @@ class SerpScraper:
                 return p
             p = p.getparent()
 
-    def _search_link_in_sons(self, node):
+    def _search_link_in_children(self, node):
+        res = []
         if node.tag == 'a':
-            return node
+            res.append(node)
         for c in node.getchildren():
-            res = self._search_link_in_sons(c)
-            if res is not None:
-                return res
+            res += self._search_link_in_children(c)
+        return res
 
-    def _get_related_description_nodes(self, title_nodes):
-        pass
+    def _get_related_description_nodes(self, title_blocks):
+        tnum = defaultdict(lambda: 0)
+        for t in title_blocks:
+            p = t
+            while p is not None:
+                tnum[p] += 1
+                p = p.getparent()
 
-    def _description_text(self, node):
-        text = node.text
-        for c in node.getchildren():
-            if len(c.getchildren()) == 0:
-                text += c.text
-            text += c.tail
-        return text
+        desc_nodes = []
+        for t in title_blocks:
+            desc = None
+            p, d = t.getparent(), 1
+            score = 0
+            while p is not None and tnum[p] <= 1:
+                for c in p.getchildren():
+                    if tnum[c] == 0:
+                        s = len(Selector(root=c).text.strip()) / d
+                        if s > score:
+                            score = s
+                            desc = c
+                p = p.getparent()
+                d += 1
+            desc_nodes.append(desc)
+        return desc_nodes
 
     def _pack_results(self, title_nodes, link_nodes, description_nodes):
         res = []
@@ -73,9 +110,12 @@ class SerpScraper:
                 link = link_nodes[i].attrib.get('href')
                 if link is not None:
                     link = link.strip()
+                link_text = Selector(root=link_nodes[i]).text.strip()
+                if len(link_text) < len(title):
+                    title = link_text
             description = None
             if description_nodes[i] is not None:
-                description = self._description_text(description_nodes[i]).strip()
+                description = Selector(root=description_nodes[i]).text.strip()
             res.append({
                 'title': title,
                 'link': link,
