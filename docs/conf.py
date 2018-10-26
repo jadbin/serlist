@@ -83,7 +83,7 @@ html_theme = 'alabaster'
 # documentation.
 #
 html_theme_options = {
-    'description': 'Search engine result page scraper',
+    'description': 'Search engine results page scraper',
     'github_user': 'jadbin',
     'github_repo': 'serlist',
     'github_button': False,
