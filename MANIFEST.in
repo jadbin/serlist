@@ -4,6 +4,7 @@ graft serlist
 graft docs
 graft tests
 graft requirements
+graft examples
 global-exclude *.pyc
 global-exclude *.pyo
 prune docs/_build
