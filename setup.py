@@ -41,7 +41,7 @@ def main():
         name="serlist",
         version=read_version(),
         url="https://github.com/jadbin/serlist",
-        description="Search engine result list scraper",
+        description="Search engine result page scraper",
         long_description=long_description,
         author="jadbin",
         author_email="jadbin.com@hotmail.com",

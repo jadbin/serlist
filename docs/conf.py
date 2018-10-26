@@ -83,7 +83,7 @@ html_theme = 'alabaster'
 # documentation.
 #
 html_theme_options = {
-    'description': 'flask + gunicorn, scaffolding tool for web services',
+    'description': 'Search engine result page scraper',
     'github_user': 'jadbin',
     'github_repo': 'serlist',
     'github_button': False,
