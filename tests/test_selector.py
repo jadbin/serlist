@@ -31,7 +31,6 @@ def test_text_selection():
     assert s.xpath("//var/text()").text == ["x", "y", "z"]
     assert s.xpath("//var").text == ["x", "y", "z"]
     assert s.xpath("//p")[0].text == "expression: x+y=z"
-    assert s.xpath("//p/text()")[0].string == "expression: "
 
 
 def test_diff_between_string_and_text():
