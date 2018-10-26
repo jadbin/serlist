@@ -46,7 +46,7 @@ Basic Usage
 
     SerpScraper().scrap(text)
 
-The variable ``text`` is the text of a search engine result page.
+The variable ``text`` is the text of a search engine results page.
 
 Documentation
 =============
