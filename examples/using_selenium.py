@@ -16,6 +16,6 @@ driver.set_page_load_timeout(20)
 driver.get('https://www.sogou.com/web?query=Tom+Hanks')
 text = driver.page_source
 driver.quit()
-results = SerpScraper().scrap(text)
+results = SerpScraper().scrape(text)
 for r in results:
     print(r)

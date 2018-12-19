@@ -20,7 +20,7 @@ class SerpScraper:
         self._title_xpath = title_xpath
         self._filter_no_link = filter_no_link
 
-    def scrap(self, text):
+    def scrape(self, text):
         selector = Selector(text=cleaner.clean_html(text))
         title_nodes = self._detect_title_nodes(selector)
         if len(title_nodes) == 0:

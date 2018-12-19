@@ -14,7 +14,7 @@ SERList
 Overview
 ========
 
-SERList is used to scrap the information from a search engine results page including:
+SERList is used to scrape the information from a search engine results page including:
 
 - title
 - link
@@ -44,7 +44,7 @@ Basic Usage
 
     from serlist import SerpScraper
 
-    SerpScraper().scrap(text)
+    SerpScraper().scrape(text)
 
 The variable ``text`` is the HTML text of a search engine results page.
 
